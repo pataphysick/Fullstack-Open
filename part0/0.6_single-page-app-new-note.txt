@@ -1,0 +1,9 @@
+note over Browser: User enters note and clicks Save button
+
+note over Browser:
+Browser executes the event handler
+that renders note to display
+end note
+
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa [{ content: "HTML is easy", date: "2019-05-23" }, ...]
+Server-->Browser: Status Code 201
