@@ -6,9 +6,31 @@ const Button = (props) => {
   )
 }
 
-const Stats = (props) => {
+const Statistics = ({good, neutral, bad}) => {
+  const total = good + neutral + bad
+  if (total === 0) {
+    return (
+      <p>No feedback given.</p>
+    )
+  }
   return (
-    <p>{props.text}: {props.value}</p>
+    <table>
+      <StatisticLine text="Good" value={good} />
+      <StatisticLine text="Neutral" value={neutral} />
+      <StatisticLine text="Bad" value={bad} />
+      <StatisticLine text="All" value={total} />
+      <StatisticLine text="Average" value={((good - bad)/total).toFixed(1)} />
+      <StatisticLine text="Positive" value={(good/total*100).toFixed(1).toString().concat('%')} />
+    </table>
+  )
+}
+
+const StatisticLine = (props) => {
+  return (
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
   )
 }
 
@@ -24,11 +46,8 @@ const App = () => {
       <Button text="Good" handleClick={() => setGood(good + 1)}/>
       <Button text="Neutral" handleClick={() => setNeutral(neutral + 1)}/>
       <Button text="Bad" handleClick={() => setBad(bad + 1)}/>
-
       <h1>Statistics</h1>
-      <Stats text="Good" value={good} />
-      <Stats text="Neutral" value={neutral} />
-      <Stats text="Bad" value={bad} />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
