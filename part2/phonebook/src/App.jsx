@@ -5,11 +5,39 @@ import Persons from './components/Persons'
 import axios from 'axios'
 import personService from './services/persons'
 
+const Notification = ({message, messageClass}) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className={messageClass}>{message}</div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageClass, setMessageClass] = useState('error')
+
+  const timeout = () => setTimeout(() => {
+    setMessage(null)
+    setMessageClass('error')
+  }, 5000)
+
+  const errorMessage = (name) => {
+    setMessage(`Information of ${name} has already been removed from server.`)
+    setMessageClass('error')
+    timeout()
+  }
+
+  const successMessage = (name) => {
+    setMessage(`Added ${name}.`)
+    setMessageClass('success')
+    timeout()
+  }
 
   const hook = () => {
     personService
@@ -39,14 +67,21 @@ const App = () => {
       if (window.confirm(`${newName} is already added to phonebook, replace old number with a new one?`)) {
         personService
           .update(existingPerson.id, { ...existingPerson, number: newNumber})
-          .then(returnedPerson => setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person)))
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+            successMessage(returnedPerson.name)
+          })
+          .catch(error => errorMessage(existingPerson.name))
       }
     }
     else {
       const newPerson = { name: newName, number: newNumber}
       personService
         .create(newPerson)
-        .then(response => setPersons(persons.concat(response)))
+        .then(response => {
+          setPersons(persons.concat(response))
+          successMessage(response.name)
+        })
     }
     setNewName('')
     setNewNumber('')
@@ -65,6 +100,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
+      <Notification messageClass={messageClass} message={message} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <h3>Add New</h3>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addPerson={addPerson} />
