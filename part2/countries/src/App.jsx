@@ -13,10 +13,20 @@ const CountryList = ({countries, filterString}) => {
   else {
     return (
       <>
-        {filteredCountries.map(country => <p key={country.cca2}>{country.name.common}</p>)}
+        {filteredCountries.map(country => <CountryLine key={country.cca2} country={country} />)}
       </>
     )
   }
+}
+
+const CountryLine = ({country}) => {
+  const [show, setShow] = useState(false)
+ return (
+   <>
+     <p>{country.name.common} <button onClick={() => setShow(!show)}>{show ? "Hide" : "Show"}</button></p>
+     {show ? <CountryInfo country={country} /> : null }
+   </>
+ )
 }
 
 const CountryInfo = ({country}) => {
@@ -27,7 +37,7 @@ const CountryInfo = ({country}) => {
       <p>Area: {country.area}</p>
       <h3>Languages</h3>
       <ul>
-    {Object.keys(country.languages).map(key => <li key={key}>{country.languages[key]}</li>)}
+        {Object.keys(country.languages).map(key => <li key={key}>{country.languages[key]}</li>)}
       </ul>
     </>
   )
