@@ -79,7 +79,7 @@ const App = () => {
       personService
         .create(newPerson)
         .then(response => {
-          setPersons(persons.concat(response))
+          setPersons(response)
           successMessage(response.name)
         })
     }
