@@ -78,9 +78,14 @@ const App = () => {
       const newPerson = { name: newName, number: newNumber}
       personService
         .create(newPerson)
-        .then(response => {
-          setPersons(persons.concat(response))
-          successMessage(response.name)
+        .then(createdPerson => {
+          setPersons(persons.concat(createdPerson))
+          successMessage(createdPerson.name)
+        })
+        .catch(error => {
+          setMessage(error.response.data.error)
+          setMessageClass('error')
+          timeout()
         })
     }
     setNewName('')
