@@ -93,6 +93,20 @@ test('Return 400 if no title or url', async () => {
   assert.strictEqual(notesAtEnd.length, helper.listWithManyBlogs.length)
 })
 
+test('Can delete blog by id', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const titles = blogsAtEnd.map(blog => blog.title)
+  assert(!titles.includes(blogToDelete.title))
+  assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+})
+
 
 after(async () => {
   await mongoose.connection.close()
