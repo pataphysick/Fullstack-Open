@@ -23,6 +23,34 @@ test('Get correct number of notes', async () => {
   assert.strictEqual(response.body.length, helper.listWithManyBlogs.length)
 })
 
+test('Check id property', async () => {
+  const response = await api.get('/api/blogs')
+
+  assert(response.body[0].id)
+  assert(!response.body[0]._id)
+})
+
+test('Create new post', async () => {
+  const newPost = {
+    title: "Finnegans Wake",
+    author: "James Joyce",
+    url: "https://www.fadedpage.com/books/20180126/html.php",
+    likes: 9001
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newPost)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.listWithManyBlogs.length + 1)
+
+  const contents = blogsAtEnd.map((blog) => blog.title)
+  assert(contents.includes('Finnegans Wake'))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
