@@ -107,6 +107,26 @@ test('Can delete blog by id', async () => {
   assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
 })
 
+test('Can update blog by id', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+
+  const newBlog = {
+    ...blogToUpdate,
+    title: 'Altered Title',
+  }
+
+  const updated = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(newBlog)
+    .expect(200)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const titles = blogsAtEnd.map(blog => blog.title)
+
+  assert(titles.includes('Altered Title'))
+})
+
 
 after(async () => {
   await mongoose.connection.close()
