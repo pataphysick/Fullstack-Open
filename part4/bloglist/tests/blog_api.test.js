@@ -12,7 +12,7 @@ beforeEach(async () => {
   await Blog.deleteMany({})
 
   const blogObjects = helper.listWithManyBlogs
-        .map(blog => new Blog(blog))
+                            .map(blog => new Blog(blog))
   const promiseArray = blogObjects.map(blog => blog.save())
   await Promise.all(promiseArray)
 })
@@ -50,6 +50,49 @@ test('Create new post', async () => {
   const contents = blogsAtEnd.map((blog) => blog.title)
   assert(contents.includes('Finnegans Wake'))
 })
+
+test('Default to zero likes if not specified', async () => {
+  const newPost = {
+    title: "Finnegans Wake",
+    author: "James Joyce",
+    url: "https://www.fadedpage.com/books/20180126/html.php",
+  }
+
+  const savedBlog = await api
+        .post('/api/blogs')
+        .send(newPost)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(savedBlog.body.likes, 0)
+})
+
+test('Return 400 if no title or url', async () => {
+  const noTitle = {
+    author: "James Joyce",
+    url: "https://www.fadedpage.com/books/20180126/html.php",
+    likes: 9001
+  }
+  const noUrl = {
+    title: "Finnegans Wake",
+    author: "James Joyce",
+    likes: 9001
+  }
+
+ const response = await api
+    .post('/api/blogs')
+    .send(noTitle)
+    .expect(400)
+
+  await api
+    .post('/api/blogs')
+    .send(noUrl)
+    .expect(400)
+
+  const notesAtEnd = await helper.blogsInDb()
+  assert.strictEqual(notesAtEnd.length, helper.listWithManyBlogs.length)
+})
+
 
 after(async () => {
   await mongoose.connection.close()
