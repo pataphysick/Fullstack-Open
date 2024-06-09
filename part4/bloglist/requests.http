@@ -1,19 +1,18 @@
-POST http://localhost:3003/api/users
-Content-Type: application/json
-
-{
-  "username": "jjoyce",
-  "name": "James Joyce",
-  "password": "riverrun"
-}
-
-#POST http://localhost:3003/api/blogs
+#POST http://localhost:3003/api/users
 # Content-Type: application/json
 #
 #{
-#  "title": "test",
-#  "author": "alsdkfj",
-#  "url": "a;lksdfj.com",
-#  "likes": 4
+#  "username": "jjoyce",
+#  "name": "James Joyce",
+#  "password": "riverrun"
 #}
-#
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "test2",
+  "author": "alsdkfj",
+  "url": "a;lksdfj.com",
+  "likes": 4
+}
