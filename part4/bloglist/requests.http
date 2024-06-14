@@ -1,29 +1,34 @@
 #POST http://localhost:3003/api/users
-# Content-Type: application/json
+#Content-Type: application/json
 #
 #{
-#  "username": "jjoyce",
-#  "name": "James Joyce",
-#  "password": "riverrun"
+#  "username": "vwoolf",
+#  "name": "Virginia Woolf",
+#  "password": "waves"
+#}
+#
+# Login
+#POST http://localhost:3003/api/login
+#Content-Type: application/json
+#
+#{
+#  "username": "vwoolf",
+#  "password": "waves"
 #}
 
-# Login
-POST http://localhost:3003/api/login
-Content-Type: application/json
-
-{
-  "username": "jjoyce",
-  "password": "riverrun"
-}
-
-# Post new blog with authentication
-POST http://localhost:3003/api/blogs
+## Post new blog with authentication
+#POST http://localhost:3003/api/blogs
+# Content-Type: application/json
+# Authorization: Bearer [token]
+#
+#{
+#  "title": "token test",
+#  "author": "alsdkfj",
+#  "url": "a;lksdfj.com",
+#  "likes": 4
+#}
+#
+# Delete blog with authentication
+DELETE http://localhost:3003/api/blogs/[id]
 Content-Type: application/json
 Authorization: Bearer [token]
-
-{
-  "title": "token test",
-  "author": "alsdkfj",
-  "url": "a;lksdfj.com",
-  "likes": 4
-}
