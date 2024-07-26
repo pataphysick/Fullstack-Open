@@ -91,6 +91,25 @@ const App = () => {
       })
   }
 
+  const likePost = (blogObject) => {
+    const id = blogObject.id
+    delete blogObject.id
+
+    blogService
+      .update(id, blogObject)
+      .then(returnedBlog => {
+        const blogIndex = blogs.findIndex(blog => (blog.id === returnedBlog.id))
+        delete returnedBlog.user
+        const newBlog = { ...blogs[blogIndex], ...returnedBlog }
+        let newBlogs = blogs
+        newBlogs[blogIndex] = newBlog
+        setBlogs(newBlogs)
+        console.log(blogs)
+        notify(`Liked blog "${returnedBlog.title}" by ${returnedBlog.author}`, false)
+      })
+  }
+
+
   const blogFormRef = useRef()
 
   const blogForm = () => (
@@ -128,7 +147,7 @@ const App = () => {
       <p>{user.name} logged in.</p>
       <button onClick={handleLogout}>Logout</button>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likePost={likePost} />
       )}
       {blogForm()}
     </div>

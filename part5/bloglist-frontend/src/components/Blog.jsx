@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likePost }) => {
   const [view, setView] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -14,11 +14,19 @@ const Blog = ({ blog }) => {
     setView(!view)
   }
 
+  const handleLike = (event) => {
+    event.preventDefault()
+    const user = blog.user.id
+    const likes = blog.likes + 1
+    likePost({ ...blog, user: user, likes: likes })
+  }
+
   const expanded = () => {
     return (
       <>
         <p>URL: {blog.url}</p>
-        <p>Likes: {blog.likes} <button>Like</button></p>
+        <p>Likes: {blog.likes} <button onClick={handleLike}>Like</button></p>
+        <p>User: {blog.user.name}</p>
       </>
     )
   }
