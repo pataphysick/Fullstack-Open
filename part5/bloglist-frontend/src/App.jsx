@@ -104,8 +104,24 @@ const App = () => {
         let newBlogs = blogs
         newBlogs[blogIndex] = newBlog
         setBlogs(newBlogs)
-        console.log(blogs)
         notify(`Liked blog "${returnedBlog.title}" by ${returnedBlog.author}`, false)
+      })
+  }
+
+  const deletePost = (blogObject) => {
+    blogService
+      .remove(blogObject.id)
+      .then(response => {
+        const newBlogs = blogs.reduce((newArray, currentPost) => {
+          if (currentPost.id !== blogObject.id) {
+            return newArray.concat(currentPost)
+          }
+          else {
+            return newArray
+          }
+        }, [])
+        setBlogs(newBlogs)
+        notify(`Deleted blog ${blogObject.title}`, true)
       })
   }
 
@@ -149,7 +165,7 @@ const App = () => {
       {blogs
        .sort((a, b) => a.likes >= b.likes ? -1 : 1)
        .map(blog =>
-        <Blog key={blog.id} blog={blog} likePost={likePost} />
+        <Blog key={blog.id} blog={blog} likePost={likePost} deletePost={deletePost} />
       )}
       {blogForm()}
     </div>
