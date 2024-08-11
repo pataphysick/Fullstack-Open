@@ -36,7 +36,7 @@ const update = (id, newObject) => {
 }
 
 const remove = (id) => {
-   const config = {
+  const config = {
     headers: { Authorization: token }
   }
 
