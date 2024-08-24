@@ -166,7 +166,7 @@ const App = () => {
         blogs
           .sort((a, b) => a.likes >= b.likes ? -1 : 1)
           .map(blog =>
-            <Blog key={blog.id} blog={blog} likePost={likePost} deletePost={deletePost} />
+            <Blog key={blog.id} blog={blog} likePost={likePost} deletePost={deletePost} user={user} />
           )
       }
       {blogForm()}

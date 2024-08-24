@@ -43,12 +43,49 @@ describe('Blog app', () => {
         await expect(page.getByText('Finnegans Wake James Joyce')).toBeVisible()
       })
 
-      test('A blog can be liked', async ({ page }) => {
-        await createBlog(page, 'Finnegans Wake', 'James Joyce', 'fw.xxx')
-        await expect(page.getByText('Finnegans Wake James Joyce')).toBeVisible()
-        await page.getByRole('button', { name: 'view' }).click()
-        await page.getByRole('button', { name: 'Like' }).click()
-        await expect(page.getByText('Likes: 1')).toBeVisible()
+      describe('With blog added', async () => {
+        beforeEach(async ({ page }) => {
+          await createBlog(page, 'Finnegans Wake', 'James Joyce', 'fw.xxx')
+        })
+
+        test('A blog can be liked', async ({ page }) => {
+          await page.getByRole('button', { name: 'view' }).click()
+          await page.getByRole('button', { name: 'Like' }).click()
+          await expect(page.getByText('Likes: 1')).toBeVisible()
+        })
+
+        test('A blog can be deleted', async ({ page }) => {
+          await page.getByRole('button', { name: 'view' }).click()
+          //page.on('dialog', dialog => dialog.accept())
+          await expect(page.getByRole('button', { name: 'Delete blog' })).toBeVisible()
+          await page.getByRole('button', { name: 'Delete blog' }).click()
+          await expect(page.getByText('Deleted blog Finnegans Wake')).toBeVisible()
+        })
+
+        test("Can't delete blog with different user", async({ page, request }) => {
+          // Add new user
+          await request.post('/api/users', {
+            data: {
+              name: 'Virginia Woolf',
+              username: 'vwoolf',
+              password: 'waves'
+            }
+          })
+          await page.goto('/')
+
+          // Check for delete button with old user
+          await page.getByRole('button', { name: 'view' }).click()
+          await expect(page.getByRole('button', { name: 'Delete blog' })).toBeVisible()
+
+          // Log out and back in as new user
+          await page.getByRole('button', { name: 'Logout' }).click()
+          await loginWith(page, 'vwoolf', 'waves')
+
+          // Check for delete button with new user
+          await page.getByRole('button', { name: 'view' }).click()
+          await expect(page.getByRole('button', { name: 'Delete blog' })).not.toBeVisible()
+        })
+
       })
     })
   })
