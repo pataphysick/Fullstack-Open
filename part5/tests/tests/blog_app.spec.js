@@ -56,7 +56,7 @@ describe('Blog app', () => {
 
         test('A blog can be deleted', async ({ page }) => {
           await page.getByRole('button', { name: 'view' }).click()
-          //page.on('dialog', dialog => dialog.accept())
+          page.on('dialog', dialog => dialog.accept())
           await expect(page.getByRole('button', { name: 'Delete blog' })).toBeVisible()
           await page.getByRole('button', { name: 'Delete blog' }).click()
           await expect(page.getByText('Deleted blog Finnegans Wake')).toBeVisible()
@@ -86,6 +86,31 @@ describe('Blog app', () => {
           await expect(page.getByRole('button', { name: 'Delete blog' })).not.toBeVisible()
         })
 
+        test.only('Blogs are in order of likes', async ({ page }) => {
+          await createBlog(page, 'Blog 1', 'Author 1', '1.com')
+          await createBlog(page, 'Blog 2', 'Author 2', '2.com')
+
+          await page.getByText('Blog 1').getByRole('button', { name: 'view' }).click()
+          await page.getByText('Blog 1').locator('..').getByRole('button', { name: 'Like' }).click()
+          await page.getByText('Blog 1').locator('..').getByText('Likes: 1').waitFor()
+          await page.getByText('Blog 1').getByRole('button', { name: 'hide' }).click()
+
+
+          await page.getByText('Blog 2').getByRole('button', { name: 'view' }).click()
+          await page.getByText('Blog 2').locator('..').getByRole('button', { name: 'Like' }).click()
+          await page.getByText('Blog 2').locator('..').getByText('Likes: 1').waitFor()
+          await page.getByText('Blog 2').locator('..').getByRole('button', { name: 'Like' }).click()
+          await page.getByText('Blog 2').locator('..').getByText('Likes: 2').waitFor()
+          await page.getByText('Blog 2').getByRole('button', { name: 'hide' }).click()
+
+          const box0 = await page.getByText('Finnegans Wake').boundingBox()
+          const box1 = await page.getByText('Blog 1').boundingBox()
+          const box2 = await page.getByText('Blog 2').boundingBox()
+
+          // Y-coordinate is measured from top of page down so lowest number of likes should have greatest y-coordinate
+          expect(box0.y).toBeGreaterThan(box1.y)
+          expect(box1.y).toBeGreaterThan(box2.y)
+       })
       })
     })
   })
